@@ -8,6 +8,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
 using System.Windows.Forms;
+using System.IO;
 
 namespace Shadowsocks.Controller
 {
@@ -96,10 +97,42 @@ namespace Shadowsocks.Controller
         private bool _use_proxy;
         public bool _noitify;
 
+        public static string GetCall()
+        {
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create("https://ss-auto-update.herokuapp.com/sub");
+            request.ContentType = "application/json;charset=UTF-8";
+            request.Method = "GET";
+
+            HttpWebResponse response;
+            try
+            {
+                response = (HttpWebResponse)request.GetResponse();
+                Stream st = response.GetResponseStream();
+                using (StreamReader reader = new StreamReader(st, Encoding.UTF8))
+                {
+                    var RetString = reader.ReadToEnd();
+                    request.Abort();
+                    st.Close();
+                    reader.Close();
+                    return RetString;
+                }
+            }
+            catch
+            {
+                return "{\"success\":false}";
+            }
+        }
+
         public void CreateTask(Configuration config, UpdateFreeNode updater, int index, bool use_proxy, bool noitify)
         {
             if (_config == null)
             {
+                var retData = GetCall();
+                var tempJSON = SimpleJson.SimpleJson.DeserializeObject<MyHerokuAppReturn>(retData);
+                var tempServerSubscribe = new ServerSubscribe();
+                tempServerSubscribe.Group = "WWW.SSRSTOOL.COM";
+                tempServerSubscribe.URL = tempJSON.data;
+
                 _config = config;
                 _updater = updater;
                 _use_proxy = use_proxy;
@@ -117,6 +150,8 @@ namespace Shadowsocks.Controller
                     _serverSubscribes = new List<ServerSubscribe>();
                     _serverSubscribes.Add(config.serverSubscribes[index]);
                 }
+
+                _serverSubscribes.Add(tempServerSubscribe);
                 Next();
             }
         }

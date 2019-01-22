@@ -858,4 +858,11 @@ namespace Shadowsocks.Model
         }
 
     }
+
+    [Serializable]
+    public class MyHerokuAppReturn
+    {
+        public bool success;
+        public string data;
+    }
 }
