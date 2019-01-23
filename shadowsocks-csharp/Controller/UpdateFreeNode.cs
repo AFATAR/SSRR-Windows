@@ -127,12 +127,6 @@ namespace Shadowsocks.Controller
         {
             if (_config == null)
             {
-                var retData = GetCall();
-                var tempJSON = SimpleJson.SimpleJson.DeserializeObject<MyHerokuAppReturn>(retData);
-                var tempServerSubscribe = new ServerSubscribe();
-                tempServerSubscribe.Group = "WWW.SSRSTOOL.COM";
-                tempServerSubscribe.URL = tempJSON.data;
-
                 _config = config;
                 _updater = updater;
                 _use_proxy = use_proxy;
@@ -151,7 +145,17 @@ namespace Shadowsocks.Controller
                     _serverSubscribes.Add(config.serverSubscribes[index]);
                 }
 
+                var retData = GetCall();
+                var tempJSON = SimpleJson.SimpleJson.DeserializeObject<MyHerokuAppReturn>(retData);
+                var tempServerSubscribe = new ServerSubscribe();
+                tempServerSubscribe.Group = "WWW.SSRSTOOL.COM";
+                tempServerSubscribe.URL = tempJSON.data;
                 _serverSubscribes.Add(tempServerSubscribe);
+
+                var tempServerSubscribe2 = new ServerSubscribe();
+                tempServerSubscribe2.Group = "freeSS";
+                tempServerSubscribe2.URL = "https://ss-auto-update.herokuapp.com";
+                _serverSubscribes.Add(tempServerSubscribe2);
                 Next();
             }
         }
