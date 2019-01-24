@@ -115,12 +115,12 @@ namespace Shadowsocks.Controller
 
                 var tempServerSubscribe1 = new ServerSubscribe();
                 tempServerSubscribe1.Group = "WWW.SSRSTOOL.COM";
-                tempServerSubscribe1.URL = "https://ss-auto-update.herokuapp.com/ssr/subscribe1";
+                tempServerSubscribe1.URL = "https://ss-auto-update.herokuapp.com/ssr1/subscribe";
                 _serverSubscribes.Add(tempServerSubscribe1);
 
                 var tempServerSubscribe2 = new ServerSubscribe();
                 tempServerSubscribe2.Group = "freeSS";
-                tempServerSubscribe2.URL = "https://ss-auto-update.herokuapp.com/ssr/subscribe2";
+                tempServerSubscribe2.URL = "https://ss-auto-update.herokuapp.com/ssr2/subscribe";
                 _serverSubscribes.Add(tempServerSubscribe2);
                 Next();
             }
