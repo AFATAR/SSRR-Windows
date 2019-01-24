@@ -1,14 +1,7 @@
 ﻿using Shadowsocks.Model;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Net;
-using System.Reflection;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Xml;
-using System.Windows.Forms;
-using System.IO;
 
 namespace Shadowsocks.Controller
 {
@@ -30,11 +23,11 @@ namespace Shadowsocks.Controller
             try
             {
                 WebClient http = new WebClient();
-                http.Headers.Add("User-Agent",
-                    String.IsNullOrEmpty(config.proxyUserAgent) ?
-                    "Mozilla/5.0 (Windows NT 5.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/35.0.3319.102 Safari/537.36"
-                    : config.proxyUserAgent);
-                http.QueryString["rnd"] = Util.Utils.RandUInt32().ToString();
+                //http.Headers.Add("User-Agent",
+                //    String.IsNullOrEmpty(config.proxyUserAgent) ?
+                //    "Mozilla/5.0 (Windows NT 5.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/35.0.3319.102 Safari/537.36"
+                //    : config.proxyUserAgent);
+                //http.QueryString["rnd"] = Util.Utils.RandUInt32().ToString();
                 if (use_proxy)
                 {
                     WebProxy proxy = new WebProxy(IPAddress.Loopback.ToString(), config.localPort);
@@ -97,31 +90,6 @@ namespace Shadowsocks.Controller
         private bool _use_proxy;
         public bool _noitify;
 
-        public static string GetCall()
-        {
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create("https://ss-auto-update.herokuapp.com/sub");
-            request.ContentType = "application/json;charset=UTF-8";
-            request.Method = "GET";
-
-            HttpWebResponse response;
-            try
-            {
-                response = (HttpWebResponse)request.GetResponse();
-                Stream st = response.GetResponseStream();
-                using (StreamReader reader = new StreamReader(st, Encoding.UTF8))
-                {
-                    var RetString = reader.ReadToEnd();
-                    request.Abort();
-                    st.Close();
-                    reader.Close();
-                    return RetString;
-                }
-            }
-            catch
-            {
-                return "{\"success\":false}";
-            }
-        }
 
         public void CreateTask(Configuration config, UpdateFreeNode updater, int index, bool use_proxy, bool noitify)
         {
@@ -145,16 +113,14 @@ namespace Shadowsocks.Controller
                     _serverSubscribes.Add(config.serverSubscribes[index]);
                 }
 
-                var retData = GetCall();
-                var tempJSON = SimpleJson.SimpleJson.DeserializeObject<MyHerokuAppReturn>(retData);
-                var tempServerSubscribe = new ServerSubscribe();
-                tempServerSubscribe.Group = "WWW.SSRSTOOL.COM";
-                tempServerSubscribe.URL = tempJSON.data;
-                _serverSubscribes.Add(tempServerSubscribe);
+                var tempServerSubscribe1 = new ServerSubscribe();
+                tempServerSubscribe1.Group = "WWW.SSRSTOOL.COM";
+                tempServerSubscribe1.URL = "https://ss-auto-update.herokuapp.com/ssr/subscribe1";
+                _serverSubscribes.Add(tempServerSubscribe1);
 
                 var tempServerSubscribe2 = new ServerSubscribe();
                 tempServerSubscribe2.Group = "freeSS";
-                tempServerSubscribe2.URL = "https://ss-auto-update.herokuapp.com";
+                tempServerSubscribe2.URL = "https://ss-auto-update.herokuapp.com/ssr/subscribe2";
                 _serverSubscribes.Add(tempServerSubscribe2);
                 Next();
             }
